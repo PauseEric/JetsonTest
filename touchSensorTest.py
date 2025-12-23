@@ -2,11 +2,11 @@ import Jetson.GPIO as GPIO
 import time
 
 # Pin Definition (use BOARD numbering mode for physical pin numbers)
-output_pin = 7
+
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(7,GPIO.IN)
-# Setup pin as output
-GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.LOW)
+
+
 
 try:
     print("Starting Detection Sequence. Press Ctrl+C to exit")
