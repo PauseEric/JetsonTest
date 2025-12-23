@@ -13,9 +13,9 @@ try:
     while True:
         print("Sensing ")
         if (GPIO.input(7) == GPIO.HIGH):
-            print("Object Detected!")
+            print("Touch Detected!")
         else:
-            print("No Object Detected.")
+            print("No Touch Detected.")
      
         time.sleep(1) # Wait 1 second
 except KeyboardInterrupt:
