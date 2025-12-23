@@ -4,7 +4,7 @@ import time
 # Pin Definition (use BOARD numbering mode for physical pin numbers)
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(7,GPIO.IN)
+GPIO.setup(11,GPIO.IN)
 
 
 
@@ -12,7 +12,7 @@ try:
     print("Starting Detection Sequence. Press Ctrl+C to exit")
     while True:
         print("Sensing ")
-        if (GPIO.input(7) == GPIO.HIGH):
+        if (GPIO.input(11) == GPIO.HIGH):
             print("Touch Detected!")
         else:
             print("No Touch Detected.")
