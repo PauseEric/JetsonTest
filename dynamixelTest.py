@@ -19,8 +19,8 @@ LED_OFF = 0
 OPERATE_MODE_ADD_LEN = (11, 1)
 
 global deviceSerial, B_Rate
-deviceSerial = "COM3"
-B_Rate = 100000
+deviceSerial = "/dev/ttyUSB0"
+B_Rate = 1000000
 
 #Communication for sending commands through Dynamixel motor controllers
 class DXL_Coms(object):
@@ -561,7 +561,7 @@ def main():
     print("This is DXL_Coms module test file.")
     print("Welcome, Main Start")
     while (1==1):
-        cmd = input("Enter Range From 0 to 4096")
+        cmd = int(input("Enter Range From 0 to 4096 "))
         MotorPosControl(tester,cmd)
     
     
