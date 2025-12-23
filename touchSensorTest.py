@@ -12,7 +12,11 @@ try:
     print("Starting Detection Sequence. Press Ctrl+C to exit")
     while True:
         print("Sensing ")
-        print(GPIO.input(7)) # sensing pin 7 as input value
+        if (GPIO.input(7) == GPIO.HIGH):
+            print("Object Detected!")
+        else:
+            print("No Object Detected.")
+     
         time.sleep(1) # Wait 1 second
 except KeyboardInterrupt:
     print("Exiting Detection Sequence")
