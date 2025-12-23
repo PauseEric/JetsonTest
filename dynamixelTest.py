@@ -19,7 +19,7 @@ LED_OFF = 0
 OPERATE_MODE_ADD_LEN = (11, 1)
 
 global deviceSerial, B_Rate
-deviceSerial = "/dev/ttyUSB0"
+deviceSerial = "COM3"
 B_Rate = 100000
 
 #Communication for sending commands through Dynamixel motor controllers
