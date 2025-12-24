@@ -15,6 +15,16 @@ IRQ  - Pin 13 (May not be neccesary)
 GND  - (Ground)
 RST  - Pin 22 (GPIO25)
 3.3V - (3.3V)
+
+
+Note:
+The command below needs to be run on the NVIDIA Jetson Orin Nano device  
+    sudo /opt/nvidia/jetson-io/jetson-io.py
+Make sure then to enable the SPI interface and reboot the device.
+
+Download the following library to interact with the MFRC522 RFID reader:
+pip install Jetson-MFRC522
+
 '''
 
 try:
