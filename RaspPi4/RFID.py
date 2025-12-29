@@ -5,17 +5,17 @@ from mfrc522 import SimpleMFRC522
 
 reader= SimpleMFRC522()
 
-while (True):
-    try:
-        print("Hold a tag near the reader")
-        id, text = reader.read()
-        print("ID:", id)
-        print("Text:", text)
-      
-    except KeyboardInterrupt:
-        GPIO.cleanup()
-        raise
-        break 
+
+try:
+    print("Hold a tag near the reader")
+    id, text = reader.read()
+    print("ID:", id)
+    print("Text:", text)
+    
+except KeyboardInterrupt:
+    GPIO.cleanup()
+    raise
+  
 
 
     
