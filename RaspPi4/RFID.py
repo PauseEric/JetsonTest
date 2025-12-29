@@ -9,7 +9,8 @@ while (True):
     try:
         print("Hold a tag near the reader")
         id, text = reader.read()
-        print("ID: %s\nText: %s" % (id,text))
+        print("ID:", id)
+        print("Text:", text)
         time.sleep(1)
     except KeyboardInterrupt:
         GPIO.cleanup()
