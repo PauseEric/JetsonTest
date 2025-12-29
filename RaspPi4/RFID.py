@@ -9,8 +9,10 @@ reader= SimpleMFRC522()
 try:
     print("Hold a tag near the reader")
     id, text = reader.read()
+    print("read successful")
     print("ID:", id)
     print("Text:", text)
+    print("details printed")
     
 except KeyboardInterrupt:
     GPIO.cleanup()
