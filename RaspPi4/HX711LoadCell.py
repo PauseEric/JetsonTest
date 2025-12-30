@@ -32,7 +32,7 @@ Also, don't forget to set the correct gain, default is 128.
 import RPi.GPIO as GPIO
 import time
 import sys
-from hx711 import HX711
+import HX711 as HX711
 
 
 hx = HX711(5, 6)
