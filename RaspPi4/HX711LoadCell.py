@@ -56,7 +56,7 @@ def setup():
     """
     code run once
     """
-    hx.set_offset('Place offset here')
+    hx.set_offset(8912895)
     hx.set_scale('Place ratio here')
 
 
