@@ -73,7 +73,7 @@ def loop():
         time.sleep(.001)
         hx.power_up()
 
-        time.sleep(2)
+        time.sleep(1)
     except (KeyboardInterrupt, SystemExit):
         cleanAndExit()
 
