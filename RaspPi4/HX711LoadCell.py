@@ -32,16 +32,23 @@ Also, don't forget to set the correct gain, default is 128.
 import RPi.GPIO as GPIO
 import time
 import sys
-import hx711 as HX711
+from hx711 import HX711
+
+# Force Python 3 ###########################################################
+
+if sys.version_info[0] != 3:
+    raise Exception("Python 3 is required.")
+
+############################################################################
 
 
 hx = HX711(5, 6)
 
 
 def cleanAndExit():
-    print ("Cleaning...")
+    print("Cleaning...")
     GPIO.cleanup()
-    print ("Bye!")
+    print("Bye!")
     sys.exit()
 
 
@@ -51,8 +58,6 @@ def setup():
     """
     hx.set_offset('Place offset here')
     hx.set_scale('Place ratio here')
-    hx.tare()
-    pass
 
 
 def loop():
@@ -62,7 +67,7 @@ def loop():
 
     try:
         val = hx.get_grams()
-        print (val)
+        print(val)
 
         hx.power_down()
         time.sleep(.001)
