@@ -531,7 +531,8 @@ class MyGroupBucketRead(dxlSDK.GroupBulkRead):
                 )
         else:
             return self.data_dict[dxl_id][PARAM_NUM_DATA]
-            
+
+'''  
 # Hand-Related Controls
 
 #Hand Motor Initialisation
@@ -572,3 +573,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''

@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./JetsonOrinNano/hx711py-jetsonnano-master/hx711py-jetsonnano-master"
+    ]
+}

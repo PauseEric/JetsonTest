@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 
 from mfrc522 import SimpleMFRC522
 
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM) 
 reader= SimpleMFRC522()
 
 
