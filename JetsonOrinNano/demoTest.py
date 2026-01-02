@@ -13,9 +13,9 @@ referenceUnit = 1
 
 if not EMULATE_HX711:
     import gpiod
-    from hx711 import HX711
+    from hx711Ref.master.hx711 import HX711
 else:
-    from emulated_hx711 import HX711
+    from hx711Ref.master.emulated_hx711 import HX711
 
 chip = None
 
@@ -117,7 +117,7 @@ def main():
     while (True):
         cmd = input ("Type 1 to open lid, 2 to close lid")
         if (cmd == 1):
-            MotorPosControl(tester,683)
+            MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
         elif(cmd == 2):
             MotorPosControl(tester,0)
         else:
