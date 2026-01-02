@@ -5,7 +5,7 @@ from dynamixelMotor import DXL_Coms #Dynamixel Dependency
 import neopixel_spi #RGB LED Strip Dependency
 import board
 
-
+'''
 #Initating Load Cell library (HX711)
 EMULATE_HX711=False
 
@@ -50,7 +50,7 @@ hx.tare()
 print("Tare done! Load cell setup complete")
 #Load Cell setup complete
 
-
+'''
 #Dynamixel Setup
 global deviceSerial, B_Rate
 deviceSerial = "/dev/ttyUSB0" # Adjust as necessary depending on USB port num 

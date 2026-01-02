@@ -6,3 +6,4 @@ pip install neccesities
     dynamixel-sdk
     gpiod
     Jetson.GPIO
+    logzero
