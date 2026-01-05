@@ -54,11 +54,11 @@ print("Tare done! Load cell setup complete")
 #Dynamixel Setup
 global deviceSerial, B_Rate
 deviceSerial = "/dev/ttyUSB0" # Adjust as necessary depending on USB port num 
-B_Rate = 57600 # Baud Rate set for XL-430 (customized to 57600 from default 1000000)
-M_ID =7 #Motor ID for XL-430
+B_Rate = 1000000 # Baud Rate set for XL-430 (default 1000000)
+M_ID =1 #Motor ID for XL-430
 
 dynamixel = DXL_Coms(deviceSerial,B_Rate)
-tester = dynamixel.createMotor("tester", motor_number = 7) #Using XL-430 with ID 1
+tester = dynamixel.createMotor("tester", motor_number = M_ID) #Using XL-430 with ID 1
 tester.switchMode('position') #Switching to position control mode
 tester.enableMotor
 
