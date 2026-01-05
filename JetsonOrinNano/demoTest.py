@@ -36,7 +36,7 @@ def cleanAndExit():
     sys.exit()
 
 if not EMULATE_HX711:
-    chip = gpiod.Chip('gpiochip0')
+    chip = gpiod.Chip("0", gpiod.Chip.OPEN_BY_NUMBER)
 
 hx = HX711(dout = 11, pd_sck = 7, chip = chip)
 
