@@ -97,18 +97,18 @@ bPixels = neopixel_spi.NeoPixel_SPI(spi, B_PIXELS, pixel_order=PIXEL_ORDER, auto
 def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is set to (0 --> off, 1 --> Color #03E2FF, 2--> #FF7C7C)
     if (status == 0):
         for i in range(NUM_PIXELS):
-            pixel[i] = [0xFFFFFFF]
+            pixel[i] = [(0,0,0)]
             pixel.show()
             time.sleep(LEDDELAY)
             print("Color Off")
     elif(status == 1):
         for i in range(NUM_PIXELS):
-            pixel[i] = [0x03E2FF]
+            pixel[i] = [(3,226,255)]
             pixel.show()
             time.sleep(LEDDELAY)
     elif(status == 2):
         for i in range(NUM_PIXELS):
-            pixel[i] = [0xFF7C7C]
+            pixel[i] = [(255,124,124)]
             pixel.show()
             time.sleep(LEDDELAY)
     else:
