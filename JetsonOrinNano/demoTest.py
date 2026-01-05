@@ -118,11 +118,18 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
 def main():
     print("Main initated, program running...")
     while (True):
-        cmd = int(input ("Type 1 to open lid, 2 to close lid"))
-        if (cmd == 1): #Open Lid 
+        cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to change color status:"))
+        if (cmd == 1): #Open Lid *LED change to Color 1)
             MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
-        elif(cmd == 2):
+            colorChange(aPixels, A_PIXELS, 1)
+            colorChange(bPixels, B_PIXELS, 1)
+        elif(cmd == 2): #Close Lid *LED turn off
             MotorPosControl(tester,0)
+            colorChange(aPixels, A_PIXELS, 0)
+            colorChange(bPixels, B_PIXELS, 0)
+        elif(cmd == 3): #Change LED Color to Color 2
+            colorChange(aPixels, A_PIXELS, 2)
+            colorChange(bPixels, B_PIXELS, 2)
         else:
             print("No valid command, please retry")
     if(KeyboardInterrupt):
