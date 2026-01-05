@@ -125,7 +125,7 @@ def main():
             print("No valid command, please retry")
 
         if(KeyboardInterrupt):
-            print("Code Exiting...")
+            print("Code Exiting... (Keyboard Interrupt Triggered)")
             exitProtocol()
 
 def exitProtocol(): #resets everything to default 
