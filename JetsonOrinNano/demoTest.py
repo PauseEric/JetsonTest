@@ -5,8 +5,8 @@ from dynamixelMotor import DXL_Coms #Dynamixel Dependency
 #import neopixel_spi #RGB LED Strip Dependency
 import board
 
-
-GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
+print(GPIO.getmode)
+#GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
 '''
 #Initating Load Cell library (HX711)
 EMULATE_HX711=False
