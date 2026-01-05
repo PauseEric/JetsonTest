@@ -2,6 +2,8 @@ import Jetson.GPIO as GPIO
 import time
 import sys
 from dynamixelMotor import DXL_Coms #Dynamixel Dependency
+import serial #For Arduino Serial Communication
+
 #import neopixel_spi #RGB LED Strip Dependency
 #import board #(Creates conflict with Jetson.GPIO --> forced to use TEGRA_SOC mode for Jetson.GPIO)
 GPIO.cleanup() #Reset GPIO settings before running script
@@ -10,7 +12,7 @@ mode = GPIO.getmode
 
 
 GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
-'''
+
 #Initating Load Cell library (HX711)
 EMULATE_HX711=False
 
@@ -55,7 +57,7 @@ hx.tare()
 print("Tare done! Load cell setup complete")
 #Load Cell setup complete
 
-'''
+
 #Dynamixel Setup
 global deviceSerial, B_Rate
 deviceSerial = "/dev/ttyUSB0" # Adjust as necessary depending on USB port num 
@@ -85,8 +87,15 @@ def checkAllPos(): #Function to print all motor positions
 #Dynamixel Setup Complete
 
 #RGB LED Strip Setup
+#Connect via Arduino Serial
+arduino=serial.Serial('/dev/ttyACM0', 9600) #Adjust ACM number as necessary
+
+
+'''Using PWM Control on Jetson
+
 #RBG LED not using NeoPixel Setup
 #Pin uses default GPIO pins configured to PWM (using Pin 33,35,37)
+
 LED_RPIN= 15
 LED_GPIN= 32
 LED_BPIN= 33
@@ -106,7 +115,7 @@ def setColor(r,g,b):
     RED.ChangeDutyCycle(_map(r, 0, 255, 0, 100))
     GREEN.ChangeDutyCycle(_map(g, 0, 255, 0, 100))
     BLUE.ChangeDutyCycle(_map(b, 0, 255, 0, 100))
-
+'''
 ''' NeoPixel Color Change Function
 #Number of Pixels on each Respective Strip (a, b, c ...)
 #a, b refer to onboard LEDS
@@ -157,8 +166,10 @@ def main():
         elif(cmd == 3): #Change LED Color to Color 2
            # colorChange(aPixels, A_PIXELS, 2)
            #colorChange(bPixels, B_PIXELS, 2)
-           setColor(0,255,0)   
+             
            print("color switch to secondary color")
+           arduino.write("2".encode()) #Sends command to Arduino to change color
+           arduino.write("Color change to 2nd preset color")
         else:
             print("No valid command, please retry")
     if(KeyboardInterrupt):
@@ -167,9 +178,9 @@ def main():
 
 def exitProtocol(): #resets everything to default 
     print("Executing Exit Protocol")
-    RED.stop()
-    GREEN.stop()
-    BLUE.stop()
+    #RED.stop()
+    #GREEN.stop()
+    #BLUE.stop()
     GPIO.cleanup()
 
 
