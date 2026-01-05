@@ -86,10 +86,11 @@ A_PIXELS= 64
 B_PIXELS= 64
 PIXEL_ORDER = neopixel_spi.GRB  # WS2812 usually GRB
 LEDDELAY = 0.2
+spiA = board.SPI(24)
+spiB = board.SPI(26)
 
-spi = board.SPI()
-aPixels = neopixel_spi.NeoPixel_SPI(spi, A_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
-bPixels = neopixel_spi.NeoPixel_SPI(spi, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
+aPixels = neopixel_spi.NeoPixel_SPI(spiA, A_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
+bPixels = neopixel_spi.NeoPixel_SPI(spiB, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
 
 
 #Two preset colors are currently Color #03E2FF and Color #FF7C7C
@@ -113,11 +114,12 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
     else:
         print("Invalid Status Error")
 
+
 def main():
     print("Main initated, program running...")
     while (True):
         cmd = int(input ("Type 1 to open lid, 2 to close lid"))
-        if (cmd == 1):
+        if (cmd == 1): #Open Lid 
             MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
         elif(cmd == 2):
             MotorPosControl(tester,0)
