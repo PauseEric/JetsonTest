@@ -4,6 +4,7 @@ import sys
 from dynamixelMotor import DXL_Coms #Dynamixel Dependency
 #import neopixel_spi #RGB LED Strip Dependency
 #import board #(Creates conflict with Jetson.GPIO --> forced to use TEGRA_SOC mode for Jetson.GPIO)
+GPIO.cleanup() #Reset GPIO settings before running script
 mode = GPIO.getmode
 #print(mode) #Uses BCM mode by default
 
