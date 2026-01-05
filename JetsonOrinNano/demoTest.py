@@ -1,4 +1,4 @@
-import Jetson.GPIO as GPIO
+#import Jetson.GPIO as GPIO
 import time
 import sys
 from dynamixelMotor import DXL_Coms #Dynamixel Dependency
@@ -6,12 +6,12 @@ import serial #For Arduino Serial Communication
 
 #import neopixel_spi #RGB LED Strip Dependency
 #import board #(Creates conflict with Jetson.GPIO --> forced to use TEGRA_SOC mode for Jetson.GPIO)
-GPIO.cleanup() #Reset GPIO settings before running script
-mode = GPIO.getmode
+#GPIO.cleanup() #Reset GPIO settings before running script
+#mode = GPIO.getmode
 #print(mode) #Uses BCM mode by default
 
 
-GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
+#GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
 
 #Initating Load Cell library (HX711)
 EMULATE_HX711=False
@@ -181,7 +181,7 @@ def exitProtocol(): #resets everything to default
     #RED.stop()
     #GREEN.stop()
     #BLUE.stop()
-    GPIO.cleanup()
+   # GPIO.cleanup()
 
 
 if __name__ == "__main__":
