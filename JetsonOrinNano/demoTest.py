@@ -2,9 +2,11 @@ import Jetson.GPIO as GPIO
 import time
 import sys
 from dynamixelMotor import DXL_Coms #Dynamixel Dependency
-import neopixel_spi #RGB LED Strip Dependency
+#import neopixel_spi #RGB LED Strip Dependency
 import board
 
+
+GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
 '''
 #Initating Load Cell library (HX711)
 EMULATE_HX711=False
@@ -80,6 +82,23 @@ def checkAllPos(): #Function to print all motor positions
 #Dynamixel Setup Complete
 
 #RGB LED Strip Setup
+#RBG LED not using NeoPixel Setup
+#Pin uses default GPIO pins configured to PWM (using Pin 33,35,37)
+LED_RPIN= 33
+LED_GPIN= 35
+LED_BPIN= 37
+
+GPIO.setup ([LED_RPIN, LED_GPIN, LED_BPIN], GPIO.OUT)
+RED = GPIO.PWM(LED_RPIN, 100)  # Set frequency to 1 kHz
+GREEN = GPIO.PWM(LED_GPIN, 100)  # Set frequency to 1 kHz
+BLUE = GPIO.PWM(LED_BPIN, 100)  # Set frequency to 1 kHz
+
+RED.start(0)  # Start PWM with 0% duty cycle (off)
+GREEN.start(0)
+BLUE.start(0)
+
+
+''' NeoPixel Color Change Function
 #Number of Pixels on each Respective Strip (a, b, c ...)
 #a, b refer to onboard LEDS
 A_PIXELS= 64 
@@ -112,7 +131,7 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
         time.sleep(LEDDELAY)    
     else:
         print("Invalid Status Error")
-
+'''
 
 def main():
     print("Main initated, program running...")
@@ -120,15 +139,16 @@ def main():
         cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to change color status:"))
         if (cmd == 1): #Open Lid *LED change to Color 1)
             MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
-            colorChange(aPixels, A_PIXELS, 1)
+            #colorChange(aPixels, A_PIXELS, 1)
            # colorChange(bPixels, B_PIXELS, 1)
         elif(cmd == 2): #Close Lid *LED turn off
             MotorPosControl(tester,0)
-            colorChange(aPixels, A_PIXELS, 0)
+           # colorChange(aPixels, A_PIXELS, 0)
            # colorChange(bPixels, B_PIXELS, 0)
         elif(cmd == 3): #Change LED Color to Color 2
-            colorChange(aPixels, A_PIXELS, 2)
+           # colorChange(aPixels, A_PIXELS, 2)
            #colorChange(bPixels, B_PIXELS, 2)
+           print("color switch to secondary color")
         else:
             print("No valid command, please retry")
     if(KeyboardInterrupt):
