@@ -8,7 +8,7 @@ mode = GPIO.getmode
 #print(mode) #Uses BCM mode by default
 
 
-GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
+GPIO.setmode(GPIO.BCM) #Setting GPIO mode to BOARD
 '''
 #Initating Load Cell library (HX711)
 EMULATE_HX711=False
