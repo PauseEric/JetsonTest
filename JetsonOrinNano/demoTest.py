@@ -86,11 +86,11 @@ A_PIXELS= 64
 B_PIXELS= 64
 PIXEL_ORDER = neopixel_spi.GRB  # WS2812 usually GRB
 LEDDELAY = 0.2
-spiA = board.SPI(24)
-spiB = board.SPI(26)
+spi= board.SPI()
 
-aPixels = neopixel_spi.NeoPixel_SPI(spiA, A_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
-bPixels = neopixel_spi.NeoPixel_SPI(spiB, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
+
+aPixels = neopixel_spi.NeoPixel_SPI(spi, A_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
+bPixels = neopixel_spi.NeoPixel_SPI(spi, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
 
 
 #Two preset colors are currently Color #03E2FF and Color #FF7C7C
