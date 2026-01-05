@@ -89,11 +89,10 @@ def checkAllPos(): #Function to print all motor positions
 LED_RPIN= 15
 LED_GPIN= 32
 LED_BPIN= 33
-
 GPIO.setup ([LED_RPIN, LED_GPIN, LED_BPIN], GPIO.OUT)
-RED = GPIO.PWM(LED_RPIN, 100)  # Set frequency to 1 kHz
-GREEN = GPIO.PWM(LED_GPIN, 100)  # Set frequency to 1 kHz
-BLUE = GPIO.PWM(LED_BPIN, 100)  # Set frequency to 1 kHz
+RED = GPIO.PWM(LED_RPIN, 1000)  # Set frequency to 1 kHz
+GREEN = GPIO.PWM(LED_GPIN, 1000)  # Set frequency to 1 kHz
+BLUE = GPIO.PWM(LED_BPIN, 1000)  # Set frequency to 1 kHz
 
 RED.start(0)  # Start PWM with 0% duty cycle (off)
 GREEN.start(0)
@@ -157,7 +156,7 @@ def main():
         elif(cmd == 3): #Change LED Color to Color 2
            # colorChange(aPixels, A_PIXELS, 2)
            #colorChange(bPixels, B_PIXELS, 2)
-           setColor(255,0,0)   
+           setColor(0,255,0)   
            print("color switch to secondary color")
         else:
             print("No valid command, please retry")
@@ -171,7 +170,7 @@ def exitProtocol(): #resets everything to default
     GREEN.stop()
     BLUE.stop()
     GPIO.cleanup()
-    
+
 
 if __name__ == "__main__":
     main()
