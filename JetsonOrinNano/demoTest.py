@@ -123,10 +123,9 @@ def main():
             MotorPosControl(tester,0)
         else:
             print("No valid command, please retry")
-
-        if(KeyboardInterrupt):
-            print("Code Exiting... (Keyboard Interrupt Triggered)")
-            exitProtocol()
+    if(KeyboardInterrupt):
+        print("Code Exiting... (Keyboard Interrupt Triggered)")
+        exitProtocol()
 
 def exitProtocol(): #resets everything to default 
     print("Executing Exit Protocol")
