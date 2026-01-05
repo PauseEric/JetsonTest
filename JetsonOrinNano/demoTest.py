@@ -108,7 +108,7 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
             time.sleep(LEDDELAY)
     elif(status == 2):
         for i in range(NUM_PIXELS):
-            aPixels[i] = [0xFF7C7C]
+            aPixels[i] = [(255, 124, 124)]
             aPixels.show()
             time.sleep(LEDDELAY)
     else:
