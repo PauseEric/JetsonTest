@@ -116,7 +116,7 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
 def main():
     print("Main initated, program running...")
     while (True):
-        cmd = input ("Type 1 to open lid, 2 to close lid")
+        cmd = int(input ("Type 1 to open lid, 2 to close lid"))
         if (cmd == 1):
             MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
         elif(cmd == 2):
