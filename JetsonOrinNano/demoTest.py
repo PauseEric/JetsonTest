@@ -97,6 +97,13 @@ RED.start(0)  # Start PWM with 0% duty cycle (off)
 GREEN.start(0)
 BLUE.start(0)
 
+def _map(x, in_min, in_max, out_min, out_max):
+    return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
+
+def setColor(r,g,b):
+    RED.ChangeDutyCycle(_map(r, 0, 255, 0, 100))
+    GREEN.ChangeDutyCycle(_map(g, 0, 255, 0, 100))
+    BLUE.ChangeDutyCycle(_map(b, 0, 255, 0, 100))
 
 ''' NeoPixel Color Change Function
 #Number of Pixels on each Respective Strip (a, b, c ...)
@@ -148,6 +155,7 @@ def main():
         elif(cmd == 3): #Change LED Color to Color 2
            # colorChange(aPixels, A_PIXELS, 2)
            #colorChange(bPixels, B_PIXELS, 2)
+           setColor(255,0,0)   
            print("color switch to secondary color")
         else:
             print("No valid command, please retry")
