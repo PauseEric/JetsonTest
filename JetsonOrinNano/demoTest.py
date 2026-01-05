@@ -167,6 +167,11 @@ def main():
 
 def exitProtocol(): #resets everything to default 
     print("Executing Exit Protocol")
+    RED.stop()
+    GREEN.stop()
+    BLUE.stop()
+    GPIO.cleanup()
+    
 
 if __name__ == "__main__":
     main()
