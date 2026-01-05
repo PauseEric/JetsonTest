@@ -86,9 +86,9 @@ def checkAllPos(): #Function to print all motor positions
 #RGB LED Strip Setup
 #RBG LED not using NeoPixel Setup
 #Pin uses default GPIO pins configured to PWM (using Pin 33,35,37)
-LED_RPIN= 13
-LED_GPIN= 19
-LED_BPIN= 26
+LED_RPIN= 33
+LED_GPIN= 35
+LED_BPIN= 37
 
 GPIO.setup ([LED_RPIN, LED_GPIN, LED_BPIN], GPIO.OUT)
 RED = GPIO.PWM(LED_RPIN, 100)  # Set frequency to 1 kHz
