@@ -90,7 +90,7 @@ spi= board.SPI()
 
 
 aPixels = neopixel_spi.NeoPixel_SPI(spi, A_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
-bPixels = neopixel_spi.NeoPixel_SPI(spi, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
+#bPixels = neopixel_spi.NeoPixel_SPI(spi, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
 
 
 #Two preset colors are currently Color #03E2FF and Color #FF7C7C
@@ -109,7 +109,7 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
         for i in range(NUM_PIXELS):
             aPixels[i] = 0xFF7C7C
         aPixels.show()
-        time.sleep(LEDDELAY)
+        time.sleep(LEDDELAY)    
     else:
         print("Invalid Status Error")
 
