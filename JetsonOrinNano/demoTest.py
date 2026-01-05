@@ -3,7 +3,7 @@ import time
 import sys
 from dynamixelMotor import DXL_Coms #Dynamixel Dependency
 #import neopixel_spi #RGB LED Strip Dependency
-import board
+#import board
 mode = GPIO.getmode
 #print(mode) #Uses BCM mode by default
 
