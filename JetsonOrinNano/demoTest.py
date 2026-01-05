@@ -6,6 +6,7 @@ from dynamixelMotor import DXL_Coms #Dynamixel Dependency
 import board
 
 print(GPIO.getmode) #Uses BCM mode by default
+GPIO.setmode(GPIO.BCM) #Setting GPIO mode to BCM
 #GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
 '''
 #Initating Load Cell library (HX711)
