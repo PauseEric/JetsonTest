@@ -17,7 +17,11 @@ import serial #For Arduino Serial Communication
 arduino=serial.Serial('/dev/ttyACM0', 9600) #Adjust ACM number as necessary
 
 #GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
+#Variables to Store Arduino States
 
+LeftLoad = 0.0
+RightLoad = 0.0;
+LockSensor = 0;
 #Dynamixel Setup
 global deviceSerial, B_Rate
 deviceSerial = "/dev/ttyUSB0" # Adjust as necessary depending on USB port num 
@@ -124,9 +128,9 @@ def main():
     
     try:
         while (True):
-            win.b1.clicked.connect(unlockLock)
+           
 
-            '''
+            
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
             if (cmd == 1): #Open Lid *LED change to Color 1)
                 MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
@@ -144,9 +148,10 @@ def main():
                 print("unlock lock")
                 arduino.write("unlock".encode()) #Sends command to Arduino to change color
                 print("Unlock Command Sent")
-            else:
+                
+            else: 
                 print("No valid command, please retry")
-            '''
+            
     except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
         sys.exit(app.exec_())
