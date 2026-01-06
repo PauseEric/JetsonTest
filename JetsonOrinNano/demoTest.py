@@ -124,19 +124,18 @@ def main():
     win.show() #end of window display
     
     receivedString = ""
-    receivedInt=0
-    receivedFloat=0.0
+    
 
 
     try:
         while (True):
             win.b1.clicked.connect(unlockLock)
 
-
+            '''
             arduino.write("lockCheck".encode()) #Sends command to Arduino to check lock status
             receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino Serial Output
-            receivedInt= int(receivedString)
-            LockSensor= receivedInt
+            LockSensor= int(receivedString)
+            
             if(LockSensor == 1):
                 win.lockStatusLabel.setText("Status: Lock is Engaged")
                 win.lockStatusLabel.adjustSize()
@@ -146,16 +145,14 @@ def main():
 
             arduino.write("loadACheck".encode()) #Sends command to Arduino to check load cell A (Right) status
             receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino Serial Output
-            receivedFloat= float(receivedString)
-            RightLoad= receivedFloat
+            RightLoad= float(receivedString)
             win.loadRightlabel.setText("Load Cell A (Right) Value: " + str(RightLoad))
 
             arduino.write("loadBCheck".encode()) #Sends command to Arduino to check load cell status
             receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino
-            receivedFloat= float(receivedString)
-            LeftLoad= receivedFloat
+            LeftLoad= float(receivedString)
             win.loadLeftlabel.setText("Load Cell B (Left) Value: " + str(LeftLoad))
-
+            '''
             '''
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
             if (cmd == 1): #Open Lid *LED change to Color 1)
