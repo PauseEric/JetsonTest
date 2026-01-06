@@ -25,7 +25,7 @@ class windowUI(QMainWindow):
         self.b1.move(50,100)
 
         #Check Lock Status Button
-        self.lockStatusLabel = QtWidgets.QPushLabel(self)
+        self.lockStatusLabel = QtWidgets.QLabel(self)
         self.lockStatusLabel.setText("Lock Status")
         self.lockStatusLabel.move(50,150)
 
