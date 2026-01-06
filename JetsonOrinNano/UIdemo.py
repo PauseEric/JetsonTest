@@ -20,12 +20,14 @@ class windowUI(QMainWindow):
 
         self.b1 = QtWidgets.QPushButton(self)
         self.b1.setText("Lock Status")
-        self.b1.clicked.connect(self.clicked)
+        self.b1.clicked.connect(self.lockClicked)
         self.b1.move(50,100)
 
-    def clicked(self):
+    def lockClicked(self):
         self.notif.setText("Status: Lock Status Button Pressed")
         self.update()
+        
+
 
     def update(self):
         self.notif.adjustSize()

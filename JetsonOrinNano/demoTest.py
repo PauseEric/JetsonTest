@@ -124,6 +124,9 @@ def main():
     
     try:
         while (True):
+            win.b1.clicked.connect(unlockLock)
+
+            '''
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
             if (cmd == 1): #Open Lid *LED change to Color 1)
                 MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
@@ -143,11 +146,15 @@ def main():
                 print("Unlock Command Sent")
             else:
                 print("No valid command, please retry")
-            
+            '''
     except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
         sys.exit(app.exec_())
         exitProtocol()
+
+def unlockLock():
+    print("Unlocking Lock...")
+    arduino.write("unlock".encode()) #Sends command to Arduino to change color
 
 def exitProtocol(): #resets everything to default 
     print("Executing Exit Protocol")
