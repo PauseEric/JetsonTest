@@ -26,12 +26,13 @@ class windowUI(QMainWindow):
 
         #Check Lock Status Button
         self.lockStatusLabel = QtWidgets.QLabel(self)
+
         self.lockStatusLabel.setText("Lock Status")
         self.lockStatusLabel.move(50,150)
 
         #load cell A (Right) display
         self.loadRightlabel= QtWidgets.QLabel(self)
-        self.loadRIghtlabel.setText("Load Cell A (Right) Value: Not Sensed")
+        self.loadRightlabel.setText("Load Cell A (Right) Value: Not Sensed")
         self.loadRightlabel.move(50,200)
 
         #Load cell B (Left) display
