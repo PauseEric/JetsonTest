@@ -121,7 +121,7 @@ def main():
   
 
     win.show() #end of window display
-    sys.exit(app.exec_())
+    
     try:
         while (True):
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
@@ -146,10 +146,12 @@ def main():
             
     except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
+        sys.exit(app.exec_())
         exitProtocol()
 
 def exitProtocol(): #resets everything to default 
     print("Executing Exit Protocol")
+    
     #RED.stop()
     #GREEN.stop()
     #BLUE.stop()
