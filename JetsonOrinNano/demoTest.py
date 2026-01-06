@@ -57,68 +57,6 @@ def checkAllPos(): #Function to print all motor positions
 #RGB LED Strip Setup
 
 
-
-'''Using PWM Control on Jetson
-
-#RBG LED not using NeoPixel Setup
-#Pin uses default GPIO pins configured to PWM (using Pin 33,35,37)
-
-LED_RPIN= 15
-LED_GPIN= 32
-LED_BPIN= 33
-GPIO.setup ([LED_RPIN, LED_GPIN, LED_BPIN], GPIO.OUT)
-RED = GPIO.PWM(LED_RPIN, 1000)  # Set frequency to 1 kHz
-GREEN = GPIO.PWM(LED_GPIN, 1000)  # Set frequency to 1 kHz
-BLUE = GPIO.PWM(LED_BPIN, 1000)  # Set frequency to 1 kHz
-
-RED.start(0)  # Start PWM with 0% duty cycle (off)
-GREEN.start(0)
-BLUE.start(0)
-
-def _map(x, in_min, in_max, out_min, out_max):
-    return int((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
-
-def setColor(r,g,b):
-    RED.ChangeDutyCycle(_map(r, 0, 255, 0, 100))
-    GREEN.ChangeDutyCycle(_map(g, 0, 255, 0, 100))
-    BLUE.ChangeDutyCycle(_map(b, 0, 255, 0, 100))
-'''
-''' NeoPixel Color Change Function
-#Number of Pixels on each Respective Strip (a, b, c ...)
-#a, b refer to onboard LEDS
-A_PIXELS= 64 
-B_PIXELS= 64
-PIXEL_ORDER = neopixel_spi.GRB  # WS2812 usually GRB
-LEDDELAY = 0.2
-spi= board.SPI()
-
-
-aPixels = neopixel_spi.NeoPixel_SPI(spi, A_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
-#bPixels = neopixel_spi.NeoPixel_SPI(spi, B_PIXELS, pixel_order=PIXEL_ORDER, auto_write=False)
-
-
-#Two preset colors are currently Color #03E2FF and Color #FF7C7C
-def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is set to (0 --> off, 1 --> Color #03E2FF, 2--> #FF7C7C)
-    if (status == 0):
-        aPixels.fill(0)
-        aPixels.show()
-        time.sleep(LEDDELAY)
-        print("Color Off")
-    elif(status == 1):
-        for i in range(NUM_PIXELS):
-            aPixels[i] = 0x03E2FF
-        aPixels.show()
-        time.sleep(LEDDELAY)
-    elif(status == 2):
-        for i in range(NUM_PIXELS):
-            aPixels[i] = 0xFF7C7C
-        aPixels.show()
-        time.sleep(LEDDELAY)    
-    else:
-        print("Invalid Status Error")
-'''
-
-
 def main():
     print("Main initated, program running...")
     win.show() #diplay window
@@ -129,10 +67,12 @@ def main():
 
 
     try:
+        
         while (True):
             #win.b1.clicked.connect(unlockLock)
             print ("Running Main Loop...")
-            '''
+            
+            #Serial Connection to Arduino to get sensor data
             arduino.write("lockCheck".encode()) #Sends command to Arduino to check lock status
             receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino Serial Output
             LockSensor= int(receivedString)
@@ -153,29 +93,27 @@ def main():
             receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino
             LeftLoad= float(receivedString)
             win.loadLeftlabel.setText("Load Cell B (Left) Value: " + str(LeftLoad))
-            '''
-            '''
+            
+            
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
             if (cmd == 1): #Open Lid *LED change to Color 1)
                 MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
-                #colorChange(aPixels, A_PIXELS, 1)
-                # colorChange(bPixels, B_PIXELS, 1)
+                
                 print("color Switch Green")
                 arduino.write("Green".encode())
             elif(cmd == 2): #Close Lid *LED turn off
                 MotorPosControl(tester,0)
-            # colorChange(aPixels, A_PIXELS, 0)
-            # colorChange(bPixels, B_PIXELS, 0)
+            
             elif(cmd == 3): #Change LED Color to Color 2
-            # colorChange(aPixels, A_PIXELS, 2)
-            #colorChange(bPixels, B_PIXELS, 2)
+            
                 print("unlock lock")
                 arduino.write("unlock".encode()) #Sends command to Arduino to change color
                 print("Unlock Command Sent")
                 
             else: 
                 print("No valid command, please retry")
-            '''
+            
+            
     except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
         sys.exit(app.exec_())
