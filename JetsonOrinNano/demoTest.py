@@ -35,6 +35,10 @@ tester.enableMotor
 
 motor_list = [tester] #List of motors for easy access 
 
+#Initialize UI Window
+app = QApplication(sys.argv)
+win = windowUI()
+
 def MotorPosControl(motorName, movement): #Function to move motor to desired position
     motorName.enableMotor()
     motorName.switchMode('position')
@@ -114,23 +118,45 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
         print("Invalid Status Error")
 '''
 
+
 def main():
     print("Main initated, program running...")
-
-    app = QApplication(sys.argv)
-    win = windowUI()
-    
-    
-
-  
-
     win.show() #end of window display
     
+    receivedString = ""
+    receivedInt=0
+    receivedFloat=0.0
+
+
     try:
         while (True):
             win.b1.clicked.connect(unlockLock)
 
-            
+
+            arduino.write("lockCheck".encode()) #Sends command to Arduino to check lock status
+            receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino Serial Output
+            receivedInt= int(receivedString)
+            LockSensor= receivedInt
+            if(LockSensor == 1):
+                win.lockStatusLabel.setText("Status: Lock is Engaged")
+                win.lockStatusLabel.adjustSize()
+            else:
+                win.lockStatusLabel.setText("Status: Lock is Disengaged")
+                win.lockStatusLabel.adjustSize()
+
+            arduino.write("loadACheck".encode()) #Sends command to Arduino to check load cell A (Right) status
+            receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino Serial Output
+            receivedFloat= float(receivedString)
+            RightLoad= receivedFloat
+            win.loadRightlabel.setText("Load Cell A (Right) Value: " + str(RightLoad))
+
+            arduino.write("loadBCheck".encode()) #Sends command to Arduino to check load cell status
+            receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino
+            receivedFloat= float(receivedString)
+            LeftLoad= receivedFloat
+            win.loadLeftlabel.setText("Load Cell B (Left) Value: " + str(LeftLoad))
+
+            '''
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
             if (cmd == 1): #Open Lid *LED change to Color 1)
                 MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
@@ -151,7 +177,7 @@ def main():
                 
             else: 
                 print("No valid command, please retry")
-            
+            '''
     except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
         sys.exit(app.exec_())
@@ -160,6 +186,10 @@ def main():
 def unlockLock():
     print("Unlocking Lock...")
     arduino.write("unlock".encode()) #Sends command to Arduino to change color
+
+def lockStatus():
+    print("Checking Lock Status...")
+    win.notif.setText("Status: Lock Status Button Pressed")
 
 def exitProtocol(): #resets everything to default 
     print("Executing Exit Protocol")

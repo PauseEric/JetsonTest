@@ -16,12 +16,28 @@ class windowUI(QMainWindow):
 
         self.notif= QtWidgets.QLabel(self)
         self.notif.setText("Status: No Latest Action")
+        self.notif.adjustSize();
         
-
+        #Unlock lock Button
         self.b1 = QtWidgets.QPushButton(self)
-        self.b1.setText("Lock Status")
+        self.b1.setText("Unlock Lock")
         self.b1.clicked.connect(self.lockClicked)
         self.b1.move(50,100)
+
+        #Check Lock Status Button
+        self.lockStatusLabel = QtWidgets.QPushLabel(self)
+        self.lockStatusLabel.setText("Lock Status")
+        self.lockStatusLabel.move(50,150)
+
+        #load cell A (Right) display
+        self.loadRightlabel= QtWidgets.QLabel(self)
+        self.loadRIghtlabel.setText("Load Cell A (Right) Value: Not Sensed")
+        self.loadRightlabel.move(50,200)
+
+        #Load cell B (Left) display
+        self.loadLeftlabel= QtWidgets.QLabel(self)
+        self.loadLeftlabel.setText("Load Cell B (Left) Value: Not Sensed")
+        self.loadLeftlabel.move(50,250)
 
     def lockClicked(self):
         self.notif.setText("Status: Lock Status Button Pressed")
