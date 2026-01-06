@@ -128,7 +128,7 @@ def main():
     
     try:
         while (True):
-           
+            win.b1.clicked.connect(win.lockClicked)
 
             
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
