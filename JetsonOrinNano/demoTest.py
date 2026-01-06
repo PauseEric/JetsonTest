@@ -2,6 +2,9 @@
 import time
 import sys
 from dynamixelMotor import DXL_Coms #Dynamixel Dependency
+from UIdemo import windowUI #UI Dependency
+from PyQt5 import QtWidgets #UI 
+from PyQt5.QtWidgets import QApplication, QMainWindow #UI
 import serial #For Arduino Serial Communication
 
 #import neopixel_spi #RGB LED Strip Dependency
@@ -10,6 +13,8 @@ import serial #For Arduino Serial Communication
 #mode = GPIO.getmode
 #print(mode)
 
+#Connect via Arduino Serial
+arduino=serial.Serial('/dev/ttyACM0', 9600) #Adjust ACM number as necessary
 
 #GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
 
@@ -42,8 +47,7 @@ def checkAllPos(): #Function to print all motor positions
 #Dynamixel Setup Complete
 
 #RGB LED Strip Setup
-#Connect via Arduino Serial
-arduino=serial.Serial('/dev/ttyACM0', 9600) #Adjust ACM number as necessary
+
 
 
 '''Using PWM Control on Jetson
@@ -108,13 +112,25 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
 
 def main():
     print("Main initated, program running...")
+
+    app = QApplication(sys.argv)
+    win = windowUI()
+    
+    
+
+  
+
+    win.show() #end of window display
+    sys.exit(app.exec_())
     try:
         while (True):
             cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
             if (cmd == 1): #Open Lid *LED change to Color 1)
                 MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
                 #colorChange(aPixels, A_PIXELS, 1)
-            # colorChange(bPixels, B_PIXELS, 1)
+                # colorChange(bPixels, B_PIXELS, 1)
+                print("color Switch Green")
+                arduino.write("Green".encode())
             elif(cmd == 2): #Close Lid *LED turn off
                 MotorPosControl(tester,0)
             # colorChange(aPixels, A_PIXELS, 0)

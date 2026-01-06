@@ -7,3 +7,4 @@ pip install neccesities
     gpiod
     Jetson.GPIO
     logzero
+    PyQt5
