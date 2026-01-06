@@ -8,55 +8,10 @@ import serial #For Arduino Serial Communication
 #import board #(Creates conflict with Jetson.GPIO --> forced to use TEGRA_SOC mode for Jetson.GPIO)
 #GPIO.cleanup() #Reset GPIO settings before running script
 #mode = GPIO.getmode
-#print(mode) #Uses BCM mode by default
+#print(mode)
 
 
 #GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
-
-#Initating Load Cell library (HX711)
-EMULATE_HX711=False
-
-referenceUnit = 1
-
-if not EMULATE_HX711:
-    import gpiod
-    from hx711Ref.master.hx711 import HX711
-else:
-    from hx711Ref.master.emulated_hx711 import HX711
-
-chip = None
-
-def cleanAndExit():
-    print("Cleaning...")
-
-    if not EMULATE_HX711:
-        chip.close()
-        
-    print("Bye!")
-    sys.exit()
-
-if not EMULATE_HX711:
-    chip = gpiod.Chip("0", gpiod.Chip.OPEN_BY_NUMBER)
-
-hx = HX711(dout = 11, pd_sck = 7, chip = chip)
-
-hx.set_reading_format("MSB", "MSB")
-
-#Calibration step for load Cell 
-
-# HOW TO CALCULATE THE REFFERENCE UNIT
-# To set the reference unit to 1. Put 1kg on your sensor or anything you have and know exactly how much it weights.
-# In this case, 92 is 1 gram because, with 1 as a reference unit I got numbers near 0 without any weight
-# and I got numbers around 184000 when I added 2kg. So, according to the rule of thirds:
-# If 2000 grams is 184000 then 1000 grams is 184000 / 2000 = 92.
-#hx.set_reference_unit(113)
-
-hx.set_reference_unit(referenceUnit)
-hx.reset()
-hx.tare()
-print("Tare done! Load cell setup complete")
-#Load Cell setup complete
-
 
 #Dynamixel Setup
 global deviceSerial, B_Rate
@@ -153,26 +108,27 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
 
 def main():
     print("Main initated, program running...")
-    while (True):
-        cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to change color status:"))
-        if (cmd == 1): #Open Lid *LED change to Color 1)
-            MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
-            #colorChange(aPixels, A_PIXELS, 1)
-           # colorChange(bPixels, B_PIXELS, 1)
-        elif(cmd == 2): #Close Lid *LED turn off
-            MotorPosControl(tester,0)
-           # colorChange(aPixels, A_PIXELS, 0)
-           # colorChange(bPixels, B_PIXELS, 0)
-        elif(cmd == 3): #Change LED Color to Color 2
-           # colorChange(aPixels, A_PIXELS, 2)
-           #colorChange(bPixels, B_PIXELS, 2)
-             
-           print("color switch to secondary color")
-           arduino.write("2".encode()) #Sends command to Arduino to change color
-           arduino.write("Color change to 2nd preset color")
-        else:
-            print("No valid command, please retry")
-    if(KeyboardInterrupt):
+    try:
+        while (True):
+            cmd = int(input ("Type 1 to open lid, 2 to close lid, 3 to unlock Lock"))
+            if (cmd == 1): #Open Lid *LED change to Color 1)
+                MotorPosControl(tester,683) #turns 60 degrees from origin ((4096/360)*60 --> 683, 683 ticks equates to 60 degree turn)
+                #colorChange(aPixels, A_PIXELS, 1)
+            # colorChange(bPixels, B_PIXELS, 1)
+            elif(cmd == 2): #Close Lid *LED turn off
+                MotorPosControl(tester,0)
+            # colorChange(aPixels, A_PIXELS, 0)
+            # colorChange(bPixels, B_PIXELS, 0)
+            elif(cmd == 3): #Change LED Color to Color 2
+            # colorChange(aPixels, A_PIXELS, 2)
+            #colorChange(bPixels, B_PIXELS, 2)
+                print("unlock lock")
+                arduino.write("unlock".encode()) #Sends command to Arduino to change color
+                print("Unlock Command Sent")
+            else:
+                print("No valid command, please retry")
+            
+    except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
         exitProtocol()
 
