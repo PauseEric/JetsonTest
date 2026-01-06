@@ -45,4 +45,3 @@ def lockStatus():
     print("Lock Status Button Pressed")
     
 
-window()
