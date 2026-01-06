@@ -123,13 +123,13 @@ def main():
     print("Main initated, program running...")
     win.show() #end of window display
     
-    receivedString = ""
+    #receivedString = ""
     
 
 
     try:
         while (True):
-            win.b1.clicked.connect(unlockLock)
+            #win.b1.clicked.connect(unlockLock)
 
             '''
             arduino.write("lockCheck".encode()) #Sends command to Arduino to check lock status
