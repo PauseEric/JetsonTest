@@ -23,7 +23,7 @@ class windowUI(QMainWindow):
         self.b1.setText("Unlock Lock")
         self.b1.clicked.connect(self.lockClicked)
         self.b1.move(50,100)
-'''
+    '''
         #Check Lock Status Button
         self.lockStatusLabel = QtWidgets.QLabel(self)
         self.lockStatusLabel.setText("Lock Status")
@@ -38,7 +38,8 @@ class windowUI(QMainWindow):
         self.loadLeftlabel= QtWidgets.QLabel(self)
         self.loadLeftlabel.setText("Load Cell B (Left) Value: Not Sensed")
         self.loadLeftlabel.move(50,250)
-'''
+    '''
+
     def lockClicked(self):
         self.notif.setText("Status: Lock Status Button Pressed")
         self.update()
