@@ -130,7 +130,7 @@ def main():
     try:
         while (True):
             #win.b1.clicked.connect(unlockLock)
-
+            print ("Running Main Loop...")
             '''
             arduino.write("lockCheck".encode()) #Sends command to Arduino to check lock status
             receivedString= arduino.readline().decode('utf-8').rstrip() #Reads Arduino Serial Output
