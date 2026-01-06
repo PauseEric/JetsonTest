@@ -121,7 +121,7 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
 
 def main():
     print("Main initated, program running...")
-    win.show() #end of window display
+    win.show() #diplay window
     
     #receivedString = ""
     
