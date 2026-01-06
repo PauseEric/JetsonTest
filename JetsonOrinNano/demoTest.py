@@ -122,7 +122,7 @@ def colorChange(pixel, NUM_PIXELS, status): #status refers to which mode LED is 
 def main():
     print("Main initated, program running...")
     win.show() #end of window display
-    sys.exit(app.exec_())
+    
     #receivedString = ""
     
 
@@ -177,7 +177,7 @@ def main():
             '''
     except(KeyboardInterrupt):
         print("Code Exiting... (Keyboard Interrupt Triggered)")
-        
+        sys.exit(app.exec_())
         exitProtocol()
 
 def unlockLock():
