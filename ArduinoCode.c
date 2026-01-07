@@ -117,13 +117,13 @@ void loop() {
     } else if (cmd == "tare") {
       loadcellA.tare();
       loadcellB.tare();
-    } else if (cmd == "LEDMode_1") { //#FF7C7C
+    } else if (cmd == "led_red") { //#FF7C7C Red
       setColorA(100, 49, 49);
       setColorB(100, 49, 49);
-    } else if (cmd == "LEDMode_2") { //#03E2FF
+    } else if (cmd == "led_blue") { //#03E2FF Blue
       setColorA(3, 226, 255);
       setColorB(3, 226, 255);
-    } else if (cmd == "LED_OFF") { //clear
+    } else if (cmd == "led_off") { //clear
       setColorA(0, 0, 0);
       setColorB(0, 0, 0);
     }
