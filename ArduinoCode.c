@@ -99,7 +99,7 @@ void loop() {
   // //  Serial.println("#03E2FF");
   // //  delay(2000);
 
-
+ 
 
   //Giving Output
   massA = loadcellA.get_units(2);// get_units(i) reads the loadcell value for 'i' amount of times, the greater the 'i', the slower the program runs
@@ -129,6 +129,7 @@ void loop() {
     }
   } else {
     //Serial.println("Waiting for Jetson");
+     
   }
 
 }
@@ -169,7 +170,7 @@ void loadCellCalibration(){
   //  loadcellB.tare();
   //Serial.println(loadcellA.get_units(10));
   Serial.println(loadcellB.get_units(10));
-
+  
   //LoadCell A Calibrate
   Serial.println("Calibrating Loadcell A \n Place a known weight on Scale A \n Press Any Key to Continue");
   while (Serial.available() == 0) {
