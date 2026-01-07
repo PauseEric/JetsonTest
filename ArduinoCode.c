@@ -44,7 +44,7 @@ const long LOADBDIVIDER = 431.13;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) {
     //waiting for Jetson to Connect
   }
