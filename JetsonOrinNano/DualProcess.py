@@ -15,7 +15,7 @@ import multiprocessing
 #print(mode)
 
 #Connect via Arduino Serial
-arduino=serial.Serial('/dev/ttyACM0', 9600) #Adjust ACM number as necessary
+arduino=serial.Serial('/dev/ttyACM0', 115200) #Adjust ACM number as necessary
 
 #GPIO.setmode(GPIO.BOARD) #Setting GPIO mode to BOARD
 #Variables to Store Arduino States

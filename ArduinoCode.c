@@ -13,7 +13,7 @@ int lockState = 0;
 String cmd; //received input get stored here
 
 //Pins
-//Pin 2 for Arduino Mega malfunctioning, avoid use (only on current board)
+//Pin 2 for Arduino Mega malfun ctioning, avoid use (only on current board)
 
 //RGB LED Pin for Strip A
 int redPinA = 4;
