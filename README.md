@@ -8,3 +8,8 @@ pip install neccesities
     Jetson.GPIO
     logzero
     PyQt5
+
+
+
+
+    

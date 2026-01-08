@@ -1,0 +1,14 @@
+LED STRIP
+
+input --> action
+move_off --> moving_set OFF
+turning_left --> moving_left
+turning_right --> moving_right 
+giveway --> Give way notice 
+arrived --> Arrive at pharmacy
+moving --> moving_straight
+move_response --> moving_response
+standby --> standby
+
+==============================
+LED Matrix

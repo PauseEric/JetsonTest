@@ -19,8 +19,8 @@
    PINS
    ========================= */
 #define PIN_RFRONT   22
-#define PIN_LFRONT   23
-#define PIN_RBACK    24
+#define PIN_LFRONT   24
+#define PIN_RBACK    23
 #define PIN_LBACK   25
 #define PIN_MATRIX   26
 
@@ -41,16 +41,18 @@ char serialBuf[SERIAL_BUF_SIZE];
 uint8_t serialPos = 0;
 bool serialOverflow = false;
 
+
 /* =========================
    MATRIX TEXT
    ========================= */
 #define MATRIX_TEXT_MAX 32
 char matrixText[MATRIX_TEXT_MAX] = "READY";
 
+bool printing = false;
 /* =========================
    STATE
    ========================= */
-enum Direction { GIVEWAY, MOVING, STOP, TURN_LEFT, TURN_RIGHT, ARRIVE };
+enum Direction {GIVEWAY, MOVINGOFF, MOVING, RESPONSE, TURN_LEFT, TURN_RIGHT, ARRIVE, STANDBY, NEUTRAL };
 Direction currentState = GIVEWAY;
 
 /* =========================
@@ -60,20 +62,42 @@ unsigned long lastBlink  = 0;
 unsigned long lastBreath = 0;
 unsigned long lastScroll = 0;
 
-bool blinkState = false;
-uint8_t breathBrightness = 60;
-int breathDelta = 2;
+/* =========================
+   Counters for checking LED Animation
+   ========================= */
+
+//General
+bool animationComplete = false; //check whether the current animation cycle is finished
+long prevR = 0;// previous RGB Value
+long prevG = 0;
+long prevB = 0;
+
+//breathing
+bool initialBreathCall = true;
+bool dimming = true; //default breath animation starts from full brightness dims
+int breathCycleTime = 600; //intialize breath cycle period (millisecond)
+int breathSteps = 20; //number of steps it takes from full brightness to low brightness
+int breathCount = 0;
+
+//blinking
+bool initialBlinkCall = true;
+bool delayComplete = false;
+int blinkCycleCount = 1;
+int blinkCount = 0; // number of blinked cycles
+int blinkCycleTime = 1800; //initalize blink cycle period (millisecond)
+int blinkRestTime = 600; //delay time for the blinking animation
+
+
+//Scroll
+const char* message = "TESTING";
+int textWidth = strlen(message) * 6; // Width of text + spacing
+int scrollOffset = 0;
+String displaytxt = "";
+String reversetxt = "";
+int blinkDelay = 500; //default blink delay set to 500ms
+
 
 int scrollX = MATRIX_WIDTH;
-
-//Breathing Timers
-
-const uint8_t breathingCSV[] PROGMEM = {
-  0, 10, 30, 70, 140, 210, 255, 255, // Inhale
-  210, 140, 70, 30, 10, 0, 0         // Exhale & Pause
-};
-const uint8_t tableSize = sizeof(breathingCSV) / sizeof(uint8_t);
-uint8_t temp = 0;
 
 
 
@@ -85,40 +109,37 @@ void processCommand(char* cmd);
 void setMatrixText(const char* text);
 void updateBlink();
 void updateBreathing();
-int  XY(int x, int y);
 
-/* =========================
-   FONT (A–Z, 5x7)
-   ========================= */
-const uint8_t font5x7[][5] = {
-  {0x7E, 0x11, 0x11, 0x7E, 0x00}, {0x7F, 0x49, 0x49, 0x36, 0x00},
-  {0x3E, 0x41, 0x41, 0x22, 0x00}, {0x7F, 0x41, 0x41, 0x3E, 0x00},
-  {0x7F, 0x49, 0x49, 0x41, 0x00}, {0x7F, 0x09, 0x09, 0x01, 0x00},
-  {0x3E, 0x41, 0x51, 0x32, 0x00}, {0x7F, 0x08, 0x08, 0x7F, 0x00},
-  {0x00, 0x41, 0x7F, 0x41, 0x00}, {0x20, 0x40, 0x41, 0x3F, 0x00},
-  {0x7F, 0x08, 0x14, 0x63, 0x00}, {0x7F, 0x40, 0x40, 0x40, 0x00},
-  {0x7F, 0x02, 0x04, 0x02, 0x7F}, {0x7F, 0x04, 0x08, 0x7F, 0x00},
-  {0x3E, 0x41, 0x41, 0x3E, 0x00}, {0x7F, 0x09, 0x09, 0x06, 0x00},
-  {0x3E, 0x41, 0x61, 0x7E, 0x00}, {0x7F, 0x09, 0x19, 0x66, 0x00},
-  {0x26, 0x49, 0x49, 0x32, 0x00}, {0x01, 0x01, 0x7F, 0x01, 0x01},
-  {0x3F, 0x40, 0x40, 0x3F, 0x00}, {0x1F, 0x20, 0x40, 0x20, 0x1F},
-  {0x3F, 0x40, 0x38, 0x40, 0x3F}, {0x63, 0x14, 0x08, 0x14, 0x63},
-  {0x07, 0x08, 0x70, 0x08, 0x07}, {0x61, 0x51, 0x49, 0x45, 0x43},
+
+// --- Your 5x7 Font Definition (A-Z) ---
+const uint8_t font5x7[26][5] = {
+  {0x00, 0x7E, 0x11, 0x11, 0x7E}, {0x00, 0x36, 0x49, 0x49, 0x7F}, // A, B
+  {0x00, 0x22, 0x41, 0x41, 0x3E}, {0x00, 0x3E, 0x41, 0x41, 0x7F}, // C, D
+  {0x00, 0x41, 0x49, 0x49, 0x7F}, {0x00, 0x01, 0x09, 0x09, 0x7F}, // E, F
+  {0x00, 0x32, 0x51, 0x41, 0x3E}, {0x00, 0x7F, 0x08, 0x08, 0x7F}, // G, H
+  {0x00, 0x41, 0x7F, 0x41, 0x00}, {0x00, 0x3F, 0x41, 0x40, 0x20}, // I, J
+  {0x00, 0x63, 0x14, 0x08, 0x7F}, {0x00, 0x40, 0x40, 0x40, 0x7F}, // K, L
+  {0x7F, 0x02, 0x04, 0x02, 0x7F}, {0x00, 0x7F, 0x08, 0x04, 0x7F}, // M, N
+  {0x00, 0x3E, 0x41, 0x41, 0x3E}, {0x00, 0x06, 0x09, 0x09, 0x7F}, // O, P
+  {0x00, 0x7E, 0x61, 0x41, 0x3E}, {0x00, 0x66, 0x19, 0x09, 0x7F}, // Q, R
+  {0x00, 0x32, 0x49, 0x49, 0x26}, {0x01, 0x01, 0x7F, 0x01, 0x01}, // S, T
+  {0x00, 0x3F, 0x40, 0x40, 0x3F}, {0x1F, 0x20, 0x40, 0x20, 0x1F}, // U, V
+  {0x3F, 0x40, 0x38, 0x40, 0x3F}, {0x63, 0x14, 0x08, 0x14, 0x63}, // W, X
+  {0x07, 0x08, 0x70, 0x08, 0x07}, {0x43, 0x45, 0x49, 0x51, 0x61}  // Y, Z
 };
 
 /* =========================
    MATRIX XY MAPPING (SERPENTINE)
    ========================= */
-int XY(int x, int y) {
-  if (x < 0 || x >= MATRIX_WIDTH)  return -1;
-  if (y < 0 || y >= MATRIX_HEIGHT) return -1;
 
-  if (y & 1)
-    return y * MATRIX_WIDTH + (MATRIX_WIDTH - 1 - x);
-  else
-    return y * MATRIX_WIDTH + x;
+uint16_t XY(uint8_t x, uint8_t y) {
+  if (x >= MATRIX_WIDTH || y >= MATRIX_HEIGHT) return MATRIX_TEXT_MAX;
+  if (y & 0x01) { // Odd rows are reversed for serpentine panels
+    return (y * MATRIX_WIDTH) + ((MATRIX_WIDTH - 1) - x);
+  } else { // Even rows are normal
+    return (y * MATRIX_WIDTH) + x;
+  }
 }
-
 /* =========================
    NON-BLOCKING SERIAL
    ========================= */
@@ -126,10 +147,10 @@ void handleSerial() {
   if (Serial.available() > 0) {
     cmd = Serial.readStringUntil('\n');
     if (cmd.length() > 0) {
-      if (cmd == "move") {
-        currentState = MOVING;
-      } else if (cmd == "stop") {
-        currentState = STOP;
+      if (cmd == "move_off") {
+        currentState = MOVINGOFF;
+      } else if (cmd == "move_response") {
+        currentState = RESPONSE;
       } else if (cmd == "turning_left") {
         currentState = TURN_LEFT;
       } else if (cmd == "turning_right") {
@@ -140,12 +161,20 @@ void handleSerial() {
         currentState = ARRIVE;
       } else if (cmd == "amr_number") {
 
-      } else if (cmd == "pharmacy") {
-
-      } else if (cmd == "test") {
-
+      } else if (cmd == "standby") {
+        currentState = STANDBY;
+      } else if (cmd == "moving") {
+        currentState = MOVING;
+      } else if (cmd.substring(0, 6) == "print:") {
+        printing = true;
+        reversetxt = cmd.substring(6);
+        displaytxt="";
+        for (int i = reversetxt.length() - 1; i >= 0; i--) {
+          displaytxt += reversetxt[i];
+        }
+        scrollOffset = -displaytxt.length() * 6;
       }
-
+      //need to add another mode called "standby"
     }
   }
 }
@@ -170,39 +199,119 @@ void handleSerial() {
 //  }
 //}
 
-void setMatrixText(const char* text) {
-  uint8_t i = 0;
-  while (text[i] && i < MATRIX_TEXT_MAX - 1) {
-    char c = text[i];
-    if (c >= 'a' && c <= 'z') c -= 32;
-    matrixText[i++] = c;
-  }
-  matrixText[i] = '\0';
-  scrollX = MATRIX_WIDTH;
-}
-
-/* =========================
-   EFFECTS
-   ========================= */
-void updateBlink() {
-  if (millis() - lastBlink >= 400) {
-    lastBlink = millis();
-    blinkState = !blinkState;
-  }
-}
-
-void updateBreathing() {
-  if (millis() - lastBreath >= 30) {
-    lastBreath = millis();
-    breathBrightness += breathDelta;
-    if (breathBrightness >= 120 || breathBrightness <= 10)
-      breathDelta = -breathDelta;
-  }
-}
-
 /* =========================
    SETUP
    ========================= */
+void setBreathing( CRGB leds[], int ledcnt, long r, long g, long b, bool lead, int cycleCount) {
+  //bool lead is used to track which LED Strip to reference as the parent while every other strip follows the lead
+  if (lead == true) {
+    if (initialBreathCall == true) {
+      initialBreathCall = false;
+      prevR = 0;
+      prevG = 0;
+      prevB = 0;
+      breathCount = -1;
+    } else {
+      EVERY_N_MILLISECONDS(breathCycleTime / breathSteps) {
+        if ((abs(prevR) < (r / breathSteps)) && (abs(prevG) < (g / breathSteps)) && (abs(prevB) < (b / breathSteps))) {
+          dimming = false;
+          breathCount = breathCount + 1;
+          Serial.println("switched to bright");
+        } else if (prevR >= r && prevG >= g && prevB >= b) {
+          dimming = true;
+          breathCount = breathCount + 1;
+          Serial.println("switched to dim ");
+        }
+        if (dimming == true) {
+          if ((prevR - (r / breathSteps)) <= 0) {
+            prevR = 0;
+          } else {
+            prevR = abs(prevR - (r / breathSteps));
+          }
+          if ((prevG - (g / breathSteps)) <= 0) {
+            prevG = 0;
+          } else {
+            prevG = abs(prevG - (g / breathSteps));
+          }
+          if ((prevB - (b / breathSteps)) <= 0) {
+            prevB = 0;
+          } else {
+            prevB = abs(prevB - (b / breathSteps));
+          }
+        } else {
+          prevR = prevR + (r / breathSteps);
+          prevB = prevB + (b / breathSteps);
+          prevG = prevG + (g / breathSteps);
+        }
+      }
+      if (breathCount == cycleCount) {
+        initialBreathCall = true;
+        animationComplete = true;
+        //Serial.println("Cycle Complete");
+      }
+    }
+  }
+  fill_solid(leds, ledcnt, CRGB(prevR, prevG , prevB));
+}
+
+void setBlinking( CRGB leds[], int ledcnt, long r, long g, long b, bool lead, int cycleCount, bool rev) {
+  // same variable reason as setBreath, except rev is added to determine the direction of blinking
+
+  if (blinkCount != ledcnt - 1) {
+    if (lead == true) {
+      EVERY_N_MILLISECONDS(blinkCycleTime / ledcnt) {
+        blinkCount = blinkCount + 1;
+      }
+    }
+    for (int i = 0 ; i < blinkCount; i++) {
+      if (rev == true) {
+        leds[i] = CRGB(r, g, b);
+      } else {
+        leds[ledcnt - 1 - i] = CRGB(r, g, b);
+      }
+    }
+  } else if (blinkCycleCount != cycleCount && blinkCount >= ledcnt - 1) {
+    fill_solid(leds,  ledcnt, CRGB::Black);
+    Serial.println("blinked");
+    Serial.println(lead);
+    if (lead == true) {
+      blinkCount = 0;
+      blinkCycleCount = blinkCycleCount + 1;
+    }
+  } else {
+    animationComplete = true;
+    blinkCycleCount = 1;
+    blinkCount = 0;
+    Serial.println("finished blinking");
+  }
+
+
+
+}
+
+void drawText(const char* msg, int startX) {
+  int xTracker = startX;
+  for (int i = 0; msg[i] != '\0'; i++) {
+    char c = msg[i];
+    if (c >= 'A' && c <= 'Z') {
+      uint8_t fontIdx = c - 'A';
+      for (int col = 0; col < 5; col++) {
+        int xPos = xTracker + col;
+        // Only draw pixels if they fall within the 8-pixel window
+        if (xPos >= 0 && xPos < MATRIX_WIDTH) {
+          uint8_t colData = font5x7[fontIdx][col];
+          for (int row = 0; row < 8; row++) {
+            if (colData & (1 << row)) {
+              matrix[XY(xPos, row)] = CRGB::Cyan; // Set color here
+            }
+          }
+        }
+      }
+    }
+    xTracker += 6; // Move pointer for next char (5 width + 1 space)
+  }
+}
+
 void setup() {
   FastLED.addLeds<WS2812, PIN_RFRONT,  GRB>(frontR,  RFRONT);
   FastLED.addLeds<WS2812, PIN_LFRONT,  GRB>(frontL, LFRONT);
@@ -220,8 +329,11 @@ void setup() {
   fill_solid(frontL, LFRONT, CRGB::Black);
   fill_solid(backR,   RBACK,  CRGB::Black);
   fill_solid(backL,  LBACK,  CRGB::Black);
-  fill_solid(matrix, MATRIX_LEDS, CRGB::Black);
+  fill_solid(matrix, MATRIX_LEDS, CRGB::Red);
 
+  //animation variable init
+  breathCycleTime = 600;
+  breathSteps = 20;
 }
 
 /* =========================
@@ -230,106 +342,126 @@ void setup() {
 void loop() {
 
   handleSerial();
-  updateBlink();
-  updateBreathing();
-  //
   //  fill_solid(frontR,  RFRONT, CRGB::Black);
   //  fill_solid(frontL, LFRONT, CRGB::Black);
   //  fill_solid(backR,   RBACK,  CRGB::Black);
   //  fill_solid(backL,  LBACK,  CRGB::Black);
   //  fill_solid(matrix, MATRIX_LEDS, CRGB::Black);
 
-  switch (currentState) {
+  switch (currentState)  {
+
+    case STANDBY:
+        
+        setBreathing(frontR, RFRONT, 153, 153, 153, true, 2 );
+        setBreathing(frontL, LFRONT, 153, 153, 153, false, 2 );
+        setBreathing(backR, RBACK, 153, 153, 153, false, 2 );
+        setBreathing(backL, LBACK, 153, 153, 153, false, 2 );
+        break;
     case MOVING:
-      fill_solid(frontR,  RFRONT, CRGB(255, 255, 255));
-      fill_solid(frontL, LFRONT, CRGB(255, 255, 255));
-      fill_solid(backR,   RBACK,  CRGB(153, 153, 153));
-      fill_solid(backL,  LBACK,  CRGB(153, 153, 153));
+
       break;
-    case STOP:
-      fill_solid(frontR,  RFRONT, CRGB::Black);
-      fill_solid(frontL, LFRONT, CRGB::Black);
-      fill_solid(backR,   RBACK,  CRGB::Black);
-      fill_solid(backL,  LBACK,  CRGB::Black);
-      fill_solid(matrix, MATRIX_LEDS, CRGB::Black);
+    case RESPONSE:
+      
+      if (animationComplete == false) {
+        setBreathing(frontR, RFRONT, 153, 153, 153, true, 3 );
+        setBreathing(frontL, LFRONT, 153, 153, 153, false, 3 );
+        setBreathing(backR, RBACK, 153, 153, 153, false, 3 );
+        setBreathing(backL, LBACK, 153, 153, 153, false, 3 );
+      } else {
+        fill_solid(frontR,  RFRONT, CRGB(153, 153, 153));
+        fill_solid(frontL, LFRONT, CRGB(153, 153, 153));
+        fill_solid(backR,   RBACK,  CRGB(153, 153, 153));
+        fill_solid(backL,  LBACK,  CRGB(153, 153, 153));
+        animationComplete = false;
+        currentState = NEUTRAL;
+      }
       break;
     case TURN_LEFT:
-      //if (blinkState) fill_solid(backL, LBACK, CRGB::Blue);
-      fill_solid(frontL, LFRONT, CHSV(100, 0, breathBrightness));
-      fill_solid(backL,  LBACK,  CHSV(100, 0, breathBrightness));
-      fill_solid(frontR,  RFRONT, CRGB(153, 153, 153));
-      fill_solid(backR,   RBACK,  CRGB(153, 153, 153));
+      if (initialBlinkCall == true) {
+        fill_solid(frontR,  RFRONT, CRGB::Black);
+        fill_solid(frontL, LFRONT, CRGB::Black);
+        fill_solid(backR,   RBACK,  CRGB::Black);
+        fill_solid(backL,  LBACK,  CRGB::Black);
+        FastLED.show();
+        initialBlinkCall = false;
+      }
+      if (animationComplete == false) {
+        fill_solid(frontL, LFRONT, CRGB(153, 153, 153));
+        fill_solid(backL,  LBACK,  CRGB(153, 153, 153));
+        setBlinking(frontR, RFRONT, 153, 153, 153 , true, 2, true);
+        setBlinking(backR, RBACK, 153, 153, 153, false,  2, false);
+      } else {
+        fill_solid(frontR,  RFRONT, CRGB(153, 153, 153));
+        fill_solid(frontL, LFRONT, CRGB(153, 153, 153));
+        fill_solid(backR,   RBACK,  CRGB(153, 153, 153));
+        fill_solid(backL,  LBACK,  CRGB(153, 153, 153));
+        animationComplete = false;
+        currentState = NEUTRAL;
+        initialBlinkCall = true;
+      }
       break;
     case TURN_RIGHT:
       //if (blinkState) fill_solid(frontL, LFRONT, CRGB::Blue);
-      temp = CSVBreathing();
-      fill_solid(frontL, LFRONT, CRGB(153, 153, 153));
-      fill_solid(backL,  LBACK,  CRGB(153, 153, 153));
-      fill_solid(frontR,  RFRONT, CHSV(100, 0, temp));
-      fill_solid(backR,   RBACK,  CHSV(100, 0, temp));
-
+      if (initialBlinkCall == true) {
+        fill_solid(frontR,  RFRONT, CRGB::Black);
+        fill_solid(frontL, LFRONT, CRGB::Black);
+        fill_solid(backR,   RBACK,  CRGB::Black);
+        fill_solid(backL,  LBACK,  CRGB::Black);
+        FastLED.show();
+        initialBlinkCall = false;
+      }
+      if (animationComplete == false) {
+        fill_solid(frontR, LFRONT, CRGB(153, 153, 153));
+        fill_solid(backR,  LBACK,  CRGB(153, 153, 153));
+        setBlinking(frontL, RFRONT, 153, 153, 153 , true, 2, true);
+        setBlinking(backL, RBACK, 153, 153, 153, false,  2, false);
+      } else {
+        fill_solid(frontR,  RFRONT, CRGB(153, 153, 153));
+        fill_solid(frontL, LFRONT, CRGB(153, 153, 153));
+        fill_solid(backR,   RBACK,  CRGB(153, 153, 153));
+        fill_solid(backL,  LBACK,  CRGB(153, 153, 153));
+        animationComplete = false;
+        currentState = NEUTRAL;
+        initialBlinkCall = true;
+      }
       break;
     case GIVEWAY:
-      fill_solid(frontR,  RFRONT, CHSV(0, 255, breathBrightness));
-      fill_solid(frontL, LFRONT, CHSV(0, 255, breathBrightness));
-      fill_solid(backR,   RBACK,  CHSV(0, 255, breathBrightness));
-      fill_solid(backL,  LBACK,  CHSV(0, 255, breathBrightness));
+
       break;
     case ARRIVE: //Show solid color blue at 60% brightness
-      fill_solid(frontR,  RFRONT, CRGB(0, 195, 181));
-      fill_solid(frontL, LFRONT, CRGB(0, 195, 181));
-      fill_solid(backR,   RBACK,  CRGB(0, 195, 181));
-      fill_solid(backL,  LBACK,  CRGB(0, 195, 181));
-  }
-
-  /* ===== MATRIX SCROLL ===== */
-  if (millis() - lastScroll >= 120) {
-    lastScroll = millis();
-    int x = scrollX;
-
-    for (uint8_t i = 0; matrixText[i]; i++) {
-      char c = matrixText[i];
-      if (c < 'A' || c > 'Z') continue;
-
-      const uint8_t* ch = font5x7[c - 'A'];
-      for (int cx = 0; cx < 5; cx++) {
-        for (int cy = 0; cy < 7; cy++) {
-          if (ch[cx] & (1 << cy)) {
-            int px = x + cx;
-            int idx = XY(px, cy);
-            if (idx >= 0) matrix[idx] = CRGB::Green;
-          }
-        }
+      //      Serial.println("arrived");
+      if (animationComplete == false) {
+        //        Serial.println("color changing");
+        setBreathing(frontR, RFRONT, 45, 153, 146, true, 3 );
+        setBreathing(frontL, LFRONT, 45, 153, 146, false, 3 );
+        setBreathing(backR, RBACK, 45, 153, 146, false, 3 );
+        setBreathing(backL, LBACK, 45, 153, 146, false, 3 );
+      } else {
+        fill_solid(frontR,  RFRONT, CRGB(45, 153, 146));
+        fill_solid(frontL, LFRONT, CRGB(45, 153, 146));
+        fill_solid(backR,   RBACK,  CRGB(45, 153, 146));
+        fill_solid(backL,  LBACK,  CRGB(45, 153, 146));
+        animationComplete = false;
+        currentState = NEUTRAL;
       }
-      x += 6;
-    }
+      break;
 
-    scrollX--;
-    int textWidth = strlen(matrixText) * 6;
-    if (scrollX < -textWidth) scrollX = MATRIX_WIDTH;
+  }
+  if (printing == true) {
+
+    EVERY_N_MILLISECONDS(120) {
+      Serial.println(scrollOffset);
+      Serial.println(displaytxt);
+      scrollOffset++;
+      fill_solid(matrix, MATRIX_LEDS, CRGB::Black);
+      drawText(displaytxt.c_str(), scrollOffset);
+      if (scrollOffset > 8) {
+        //scrollOffset = MATRIX_WIDTH; //reset message scroll origin
+        printing = false;
+      }
+    }
   }
 
   FastLED.show();
-  delay(500);
-}
-
-
-uint8_t CSVBreathing() {
-  static uint8_t index = 0;
-  //static uint8_t hue = 160; // Blue hue
-
-  // 2. Control update speed (e.g., 60ms per data point)
-  EVERY_N_MILLISECONDS(60) {
-    // 3. Read the 'Value' from the CSV table
-    uint8_t val = pgm_read_byte(&(breathingCSV[index]));
-    index = (index + 1) % tableSize;
-    // 4. Apply using CHSV (Hue, Saturation, Value)
-    // fill_solid converts CHSV to CRGB automatically
-    //fill_solid(leds, NUM_LEDS, CHSV(hue, 255, val));
-
-    // FastLED.show();
-
-    // Move to next step in the CSV data
-    return (val);
-  }
+  delay(10);
 }
